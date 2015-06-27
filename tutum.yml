@@ -1,5 +1,5 @@
 web:
-  image: dciccale/docker-angular-tutum
+  image: tsonev/my-docker-node-app
   autorestart: always
   ports:
     - "80:9000"
