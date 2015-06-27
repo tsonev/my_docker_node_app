@@ -3,17 +3,5 @@
 <div class="container">
     <h1>Chart</h1>
 
-    <div class="row">
-        <table class="table">
-
-            <tbody>
-            <tr ng-repeat="stock in stocks"> <!-- Dynamic Binding of Angular Template with Data -->
-                <td>{{stock.Product}}</td>
-                <td>{{stock.BBP}}</td>
-                <td>{{stock.BSP}}</td>
-                <td>{{stock.LTP}}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+    <line-chart chart="chart" class="line-chart"></line-chart>
 </div>

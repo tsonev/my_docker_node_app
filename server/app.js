@@ -33,33 +33,48 @@ var io = require('socket.io').listen(server);
 //turn off debug
 io.set('log level', 1);
 
-var serverjson = [
-    {"Product": "REL", "BBP": "10", "BSP": "10.2", "LTP": "10.1"},
-    {"Product": "BEL", "BBP": "20", "BSP": "20.4", "LTP": "20"},
-    {"Product": "MTL", "BBP": "50", "BSP": "50.5", "LTP": "50.1"},
-    {"Product": "BSL", "BBP": "100", "BSP": "101", "LTP": "100.2"}
-];
+
+var clients = {};
+var clientCount = 0;
+var interval;
+
+var gaugeValue = 50;
+
+function broadcast() {
+    gaugeValue += Math.random() * 40 - 20;
+    gaugeValue = gaugeValue < 0 ? 0 : gaugeValue > 100 ? 100 : gaugeValue;
+    var time = Date.now();
+
+    var message = JSON.stringify({ value: Math.floor(gaugeValue), timestamp: time });
+
+    for (var key in clients) {
+        if(clients.hasOwnProperty(key)) {
+            clients[key].write(message);
+        }
+    }
+
+    //setTimeout(broadcast, 1000);
+}
+
+function startBroadcast () {
+    interval = setInterval(broadcast, 1000);
+    //broadcast();
+}
 
 // define interactions with client
 io.sockets.on('connection', function (socket) {
-    //send data to client
-    setInterval(function () {
+    clientCount++;
+    if (clientCount === 1) {
+        startBroadcast();
+    }
 
-        for (var i = 0; i < serverjson.length; i++) {
-            serverjson[i].BBP = Math.round((parseInt(serverjson[i].BBP) + Math.random()) * 100) / 100;
-            serverjson[i].BSP = Math.round((parseInt(serverjson[i].BSP) + Math.random()) * 100) / 100;
-            serverjson[i].LTP = Math.round((parseInt(serverjson[i].LTP) + Math.random()) * 100) / 100;
+    clients[socket.id] = socket;
+
+    socket.on('close', function() {
+        clientCount--;
+        delete clients[socket.id];
+        if (clientCount === 0) {
+            clearInterval(interval);
         }
-
-        var serverjsonstr = JSON.stringify(serverjson);
-
-        socket.emit('msg', {'msg': serverjsonstr});
-        socket.emit('msgWrite', msgWrite);
-    }, 1000);
-
-    //recieve client data
-    socket.on('client_data', function (data) {
-        process.stdout.write(data.letter);
-        msgWrite = msgWrite + data.letter;
     });
 });
