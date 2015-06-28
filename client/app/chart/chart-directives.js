@@ -7,7 +7,9 @@ angular.module('app.chart.directives')
         return {
             restrict: 'E',
             replace: true,
-            scope: {},
+            scope: {
+
+            },
             templateUrl: 'components/otp/otpWidget.html',
             controllerAs: 'otp',
             bindToController: true,
@@ -27,6 +29,12 @@ angular.module('app.chart.directives')
                     if(secret.key) {
                         otp.secret = secret.key;
                     }
+                    if (secret.value && secret.timestamp) {
+                        socket.setAuthenticated(true);
+                    }
+                    if(secret.error){
+                        otp.error = secret.error;
+                    }
                 });
 
                 return otp;
@@ -40,11 +48,41 @@ angular.module('app.chart.directives')
         return {
             template: '<div></div>',
             scope: {
-                chart: '='
+
             },
             restrict: 'E',
             replace: true,
-            link: function postLink(scope, element) {
+            controllerAs: 'cc',
+            bindToController: true,
+            controller: [ 'socket', function(socket) {
+                var cc = this;
+                var items = [], item;
+
+                socket.on('message', function (data) {
+                    // Listening in Socket in Angular Controller
+
+
+                    item = JSON.parse(data);
+                    if (item.value && item.timestamp) {
+
+                        items.push(item);
+
+                        //Trim the length of the items in the chart
+                        if (items.length > 30) {
+                            items.shift();
+                        }
+
+                        cc.chart = {
+                            data: items,
+                            max: 30
+                        };
+                    }
+
+                });
+
+                return cc;
+            }],
+            link: function postLink(scope, element, attrs, ctrl) {
                 var lineChart = new google.visualization.LineChart(element[0]);
 
                 function draw(chart) {
@@ -77,7 +115,7 @@ angular.module('app.chart.directives')
                     lineChart.draw(view, chartOptions);
                 }
 
-                scope.$watch('chart', function (chart) {
+                scope.$watch('cc.chart', function (chart) {
                     if (chart && chart.data && chart.max) {
                         draw(chart);
                     }

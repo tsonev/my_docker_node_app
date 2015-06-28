@@ -23,12 +23,15 @@
         </div>
     </div>
     <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4 text-center">
-        <div class="well">
-            <div class="input-group input-group-lg">
-                <input type="text" class="form-control" ng-model="otp.token" placeholder="Verification Code">
+        <div class="well" ng-class="(otp.error)?'has-error':''">
+            <label ng-if="otp.error" class="control-label" for="verificationToken">{{otp.error}}</label>
+            <div class="input-group input-group-lg" >
+
+                <input type="text" id="verificationToken" class="form-control" ng-model="otp.token" placeholder="Verification Code">
                 <span class="input-group-btn">
                     <button type="submit" class="btn btn-primary" ng-click="otp.submitToken()">Authenticate</button>
                 </span>
+
             </div>
 
         </div>

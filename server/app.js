@@ -48,12 +48,12 @@ function broadcast() {
     gaugeValue = gaugeValue < 0 ? 0 : gaugeValue > 100 ? 100 : gaugeValue;
     var time = Date.now();
 
-    var message = JSON.stringify({ value: Math.floor(gaugeValue), timestamp: time });
+    var message = JSON.stringify({value: Math.floor(gaugeValue), timestamp: time});
 
     for (var key in clients) {
-        if(clients.hasOwnProperty(key)) {
+        if (clients.hasOwnProperty(key)) {
             //send graph data only for authenticated clients
-            if(clients[key].otp_authenticated){
+            if (clients[key].otp_authenticated) {
                 clients[key].write(message);
             }
         }
@@ -61,7 +61,7 @@ function broadcast() {
 
 }
 
-function startBroadcast () {
+function startBroadcast() {
     //broadcast every second
     interval = setInterval(broadcast, 1000);
 
@@ -79,31 +79,34 @@ io.sockets.on('connection', function (socket) {
     // when opening a socket every client gets a random base32 secret key
     // for the duration of the socket lifetime
     // in real systems :
-    // 1. these would be a used in conjunction with Somethin You Know = username and passwords
-    // 2. and OTP will be delivered to Something You Have - independant channel
+    // 1. these would be a used in conjunction with Something You Know = username and passwords
+    // 2. and OTP will be delivered to Something You Have - independent channel phone/hw token
 
     clients[socket.id].secret = totp.getBase32Key();
 
-    socket.on('message', function(message) {
+    socket.on('message', function (message) {
 
         //client sent auth token
-        if(message.token) {
+        if (message.token) {
             var otp = totp.getOTP(clients[socket.id].secret);
             //veryfy token
-            if(message.token === otp) {
+            if (message.token === otp) {
                 clients[socket.id].otp_authenticated = true;
+            } else {
+                var msg = JSON.stringify({error: 'Wrong verification token'});
+                clients[socket.id].write(msg);
             }
         }
 
         //send the secret key to the client
-        if(message.secret === 'get'){
-            var msg = JSON.stringify({ key: clients[socket.id].secret});
+        if (message.secret === 'get') {
+            var msg = JSON.stringify({key: clients[socket.id].secret});
             clients[socket.id].write(msg);
         }
 
     });
 
-    socket.on('close', function() {
+    socket.on('close', function () {
         clientCount--;
         delete clients[socket.id];
         if (clientCount === 0) {

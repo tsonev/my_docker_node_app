@@ -3,8 +3,8 @@
 <div class="container">
     <h1>Chart</h1>
 
-    <otp-widget ng-if="!isAuthenticated"></otp-widget>
+    <otp-widget ng-if="!isAuthenticated()"></otp-widget>
 
-    <line-chart chart="chart" class="line-chart" ng-if="isAuthenticated"></line-chart>
+    <line-chart chart="chart" class="line-chart" ng-if="isAuthenticated()"></line-chart>
 
 </div>
