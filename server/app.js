@@ -8,7 +8,7 @@ var config = require('./config');
 
 var totpObj = require('./config/totp');
 var totp = new totpObj.TOTP();
-var secret = "JBSWY3DPEHPK3PXP";
+
 
 // Setup server
 var app = express();
@@ -44,8 +44,6 @@ var gaugeValue = 50;
 
 function broadcast() {
 
-
-
     gaugeValue += Math.random() * 40 - 20;
     gaugeValue = gaugeValue < 0 ? 0 : gaugeValue > 100 ? 100 : gaugeValue;
     var time = Date.now();
@@ -54,20 +52,19 @@ function broadcast() {
 
     for (var key in clients) {
         if(clients.hasOwnProperty(key)) {
-            if(!clients[key].otp_authenticated){
-            //    clients[key].disconnect('unauthorized');
-            }else {
+            //send graph data only for authenticated clients
+            if(clients[key].otp_authenticated){
                 clients[key].write(message);
             }
         }
     }
 
-    //setTimeout(broadcast, 1000);
 }
 
 function startBroadcast () {
+    //broadcast every second
     interval = setInterval(broadcast, 1000);
-    //broadcast();
+
 }
 
 // define interactions with client
@@ -79,21 +76,29 @@ io.sockets.on('connection', function (socket) {
 
     clients[socket.id] = socket;
 
+    // when opening a socket every client gets a random base32 secret key
+    // for the duration of the socket lifetime
+    // in real systems :
+    // 1. these would be a used in conjunction with Somethin You Know = username and passwords
+    // 2. and OTP will be delivered to Something You Have - independant channel
+
     clients[socket.id].secret = totp.getBase32Key();
 
     socket.on('message', function(message) {
 
+        //client sent auth token
         if(message.token) {
             var otp = totp.getOTP(clients[socket.id].secret);
-            console.log( message.token +'==='+ otp);
+            //veryfy token
             if(message.token === otp) {
                 clients[socket.id].otp_authenticated = true;
             }
         }
 
+        //send the secret key to the client
         if(message.secret === 'get'){
-            var message = JSON.stringify({ key: clients[socket.id].secret});
-            clients[socket.id].write(message);
+            var msg = JSON.stringify({ key: clients[socket.id].secret});
+            clients[socket.id].write(msg);
         }
 
     });

@@ -15,9 +15,6 @@ describe('main', function () {
   }));
 
   describe('main tests', function () {
-    it('should have two lists with 3 items each', function () {
-      expect($scope.list1.length).to.equal(3);
-      expect($scope.list2.length).to.equal(3);
-    });
+
   });
 });

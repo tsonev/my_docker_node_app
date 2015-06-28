@@ -14,6 +14,7 @@ angular.module('app.chart.directives')
             controller: [ 'socket', function(socket) {
                 var otp = this;
 
+                //Get key form backend via open socket
                 socket.getSecret();
 
                 otp.submitToken = function(){
@@ -21,6 +22,7 @@ angular.module('app.chart.directives')
                 };
 
                 socket.on('message',function(data){
+                    //if user is not authenticated socket should broadcast secret.key
                     var secret = JSON.parse(data);
                     if(secret.key) {
                         otp.secret = secret.key;
