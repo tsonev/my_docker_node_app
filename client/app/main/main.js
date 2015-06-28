@@ -1,4 +1,10 @@
-angular.module('app')
+'use strict';
+
+angular.module('app.main', [
+    'app.main.controllers'
+]);
+
+angular.module('app.main')
     .config(['$stateProvider', function ($stateProvider) {
         'use strict';
 

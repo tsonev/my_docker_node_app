@@ -1,9 +1,13 @@
-angular.module('app')
-  .config(['$stateProvider', function ($stateProvider) {
-    'use strict';
+'use strict';
 
-    $stateProvider.state('about', {
-      url: '/about',
-      templateUrl: 'app/about/about.html'
-    });
-  }]);
+angular.module('app.about', []);
+
+angular.module('app.about')
+    .config(['$stateProvider', function ($stateProvider) {
+        'use strict';
+
+        $stateProvider.state('about', {
+            url: '/about',
+            templateUrl: 'app/about/about.html'
+        });
+    }]);
