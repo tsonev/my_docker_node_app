@@ -1,0 +1,6 @@
+<div>
+    Secret : {{otp.secret}}<br/>
+    <img ng-if="otp.secret" ng-src="{{'https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=otpauth://totp/user@host.com%3Fsecret%3D'+otp.secret}}" alt="" /><br/>
+    <input type="text" ng-model="otp.token"/>
+    <button type="submit" ng-click="otp.submitToken()">Submit Token</button>
+</div>

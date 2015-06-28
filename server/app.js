@@ -6,6 +6,10 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 var express = require('express');
 var config = require('./config');
 
+var totpObj = require('./config/totp');
+var totp = new totpObj.TOTP();
+var secret = "JBSWY3DPEHPK3PXP";
+
 // Setup server
 var app = express();
 var http = require('http');
@@ -25,8 +29,6 @@ server = http.createServer(app).listen(config.port, function () {
 exports = module.exports = app;
 
 
-var msgWrite = '';
-
 // use socket.io
 var io = require('socket.io').listen(server);
 
@@ -41,6 +43,9 @@ var interval;
 var gaugeValue = 50;
 
 function broadcast() {
+
+
+
     gaugeValue += Math.random() * 40 - 20;
     gaugeValue = gaugeValue < 0 ? 0 : gaugeValue > 100 ? 100 : gaugeValue;
     var time = Date.now();
@@ -49,7 +54,11 @@ function broadcast() {
 
     for (var key in clients) {
         if(clients.hasOwnProperty(key)) {
-            clients[key].write(message);
+            if(!clients[key].otp_authenticated){
+            //    clients[key].disconnect('unauthorized');
+            }else {
+                clients[key].write(message);
+            }
         }
     }
 
@@ -69,6 +78,25 @@ io.sockets.on('connection', function (socket) {
     }
 
     clients[socket.id] = socket;
+
+    clients[socket.id].secret = totp.getBase32Key();
+
+    socket.on('message', function(message) {
+
+        if(message.token) {
+            var otp = totp.getOTP(clients[socket.id].secret);
+            console.log( message.token +'==='+ otp);
+            if(message.token === otp) {
+                clients[socket.id].otp_authenticated = true;
+            }
+        }
+
+        if(message.secret === 'get'){
+            var message = JSON.stringify({ key: clients[socket.id].secret});
+            clients[socket.id].write(message);
+        }
+
+    });
 
     socket.on('close', function() {
         clientCount--;

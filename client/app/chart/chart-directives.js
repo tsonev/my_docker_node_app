@@ -3,6 +3,37 @@
 angular.module('app.chart.directives', []);
 
 angular.module('app.chart.directives')
+    .directive('otpWidget',[function(){
+        return {
+            restrict: 'E',
+            replace: true,
+            scope: {},
+            templateUrl: 'components/otp/otpWidget.html',
+            controllerAs: 'otp',
+            bindToController: true,
+            controller: [ 'socket', function(socket) {
+                var otp = this;
+
+                socket.getSecret();
+
+                otp.submitToken = function(){
+                    socket.sendToken(otp.token);
+                };
+
+                socket.on('message',function(data){
+                    var secret = JSON.parse(data);
+                    if(secret.key) {
+                        otp.secret = secret.key;
+                    }
+                });
+
+                return otp;
+            }],
+            link: function(scope, element, attrs, ctrl) {
+
+            }
+        };
+    }])
     .directive('lineChart', function () {
         return {
             template: '<div></div>',
