@@ -10,7 +10,7 @@
     "tutum"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/dciccale/docker-angular-tutum.git",
+  "homepage": "https://github.com/tsonev/my_docker_node_app.git",
   "ignore": [
     "**/.*",
     "node_modules",
