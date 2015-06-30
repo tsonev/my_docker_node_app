@@ -13,9 +13,11 @@ module.exports = function (app) {
     app.route('/:url(app|bower_components)/*')
         .get(errors[404]);
 
+
     // All other routes should redirect to the index.html
     app.route('/*')
         .get(function (req, res) {
-            res.sendFile(path.join(app.get('appPath'), 'index.html'));
+                res.sendFile(path.join(app.get('appPath'), 'index.html'));
         });
+
 };

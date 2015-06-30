@@ -1,4 +1,12 @@
-# Docker, AngularJS and Tutum
+# AngularJS sockets.io, google two factor authentication via GoogleAuthenticator and Docker -> Tutum -> digitalOcean Continuous delivery pipeline
+
+client certificate:
+
+https://github.com/tsonev/my_docker_node_app/tree/master/server/config/ssl
+
+demo:
+
+https://95.85.29.160/
 
 bower install
 npm install

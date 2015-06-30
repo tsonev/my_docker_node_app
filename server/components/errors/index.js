@@ -22,3 +22,18 @@ module.exports[404] = function pageNotFound(req, res) {
     }
   });
 };
+module.exports[401] = function pageNotFound(req, res) {
+  var viewFilePath = path.join(config.root, 'server/views/401.html');
+  var statusCode = 401;
+  var result = {
+    status: statusCode
+  };
+
+  res.status(result.status);
+  res.sendFile(viewFilePath, function (err) {
+    // if the file doesn't exist of there is an error reading it just return a json with the error
+    if (err) {
+      return res.json(result, result.status);
+    }
+  });
+};
