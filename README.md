@@ -1,8 +1,11 @@
 # AngularJS sockets.io, google two factor authentication via GoogleAuthenticator and Docker -> Tutum -> digitalOcean Continuous delivery pipeline
 
-client certificate:
+Uses mutual client-server ssl authentication, client certificate available at:
+
 
 https://github.com/tsonev/my_docker_node_app/tree/master/server/config/ssl
+
+pfx password: pass:x
 
 demo:
 
