@@ -6,14 +6,19 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 var express = require('express');
 var config = require('./config');
 
+var helmet = require('helmet');
+
 var totpObj = require('./config/totp');
 var totp = new totpObj.TOTP();
 
 
 // Setup server
 var app = express();
-var http = require('http');
+var https = require('https');
 var server;
+
+//setup security
+app.use(helmet());
 
 // Express configuration
 require('./config/express')(app);
@@ -21,7 +26,24 @@ require('./config/express')(app);
 require('./routes')(app);
 
 // Start server
-server = http.createServer(app).listen(config.port, function () {
+
+//security settings
+
+app.use(helmet.noCache());
+app.use(helmet.frameguard());
+
+app.use(helmet.xssFilter());
+app.use(helmet.frameguard('sameorigin'));
+var ninetyDaysInMilliseconds = 7776000000;
+app.use(helmet.hsts({ maxAge: ninetyDaysInMilliseconds }));
+app.disable('x-powered-by');
+app.use(helmet.ieNoOpen());
+app.use(helmet.noSniff());
+
+//security settings
+
+
+server = https.createServer(config,app).listen(config.port, function () {
     console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
 });
 
