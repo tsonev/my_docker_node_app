@@ -11,7 +11,9 @@ demo:
 
 https://95.85.29.160/
 
-The angularjs app itself uses nodejs os api to display Average CPU load + memory used
+The angularjs app itself uses nodejs os api to display Average CPU load + memory used.
+
+*Due to the fact that average load is valid only for unix systems, this app will return 0 for cpu load on windows
 
 npm install
 
