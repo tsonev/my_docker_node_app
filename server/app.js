@@ -5,6 +5,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 var express = require('express');
 var config = require('./config');
+var os = require('os');
 
 var helmet = require('helmet');
 
@@ -62,19 +63,47 @@ var clients = {};
 var clientCount = 0;
 var interval;
 
-var gaugeValue = 50;
+
 
 function broadcast() {
-    var load = require("os").loadavg();
-    var cpus = require("os").cpus().length;
+    var load = os.loadavg();
+    var cpus = os.cpus().length;
     //load[0] is the average load for the last minute
-    gaugeValue = Math.round(load[0]/cpus*100);
+    var gaugeValue1 = Math.round(load[0]/cpus*100);
+    var gaugeValue5 = Math.round(load[1]/cpus*100);
+    var gaugeValue15 = Math.round(load[2]/cpus*100);
     //gaugeValue += Math.random() * 40 - 20;
-    console.log(load);
-    gaugeValue = gaugeValue < 0 ? 0 : gaugeValue > 100 ? 100 : gaugeValue;
+    var freeMem = Math.round(os.freemem()/1024/1024/1024*1000)/1000,
+        totalMem = Math.round(os.totalmem()/1024/1024/1024*1000)/1000,
+        usedMem = Math.round((os.totalmem()-os.freemem())/1024/1024/1024*1000)/1000;
+    console.log(
+        'Host : '+os.hostname(),
+        'OS : '+os.type(),
+        'RAM total : '+totalMem+' GB',
+        'RAM free : '+freeMem+' GB',
+        'CPU count : '+os.cpus().length,
+        'Avg load : '+os.loadavg()
+    );
+    //gaugeValue = gaugeValue < 0 ? 0 : gaugeValue > 100 ? 100 : gaugeValue;
     var time = Date.now();
+    var chartObj = {
+        chart : {
+            cpu1 : {
+                value: gaugeValue1, timestamp: time , absMax : 100
+            },
+            cpu5 : {
+                value: gaugeValue5, timestamp: time , absMax : 100
+            },
+            cpu15 : {
+                value: gaugeValue15, timestamp: time , absMax : 100
+            },
+            mem : {
+                value: usedMem, timestamp: time, absMax : totalMem
+            }
+        }
+    };
 
-    var message = JSON.stringify({value: gaugeValue, timestamp: time});
+    var message = JSON.stringify(chartObj);
 
     for (var key in clients) {
         if (clients.hasOwnProperty(key)) {
@@ -88,7 +117,7 @@ function broadcast() {
 }
 
 function startBroadcast() {
-    //broadcast every second
+    //broadcast every seconds*1000
     interval = setInterval(broadcast, 1000);
 
 }

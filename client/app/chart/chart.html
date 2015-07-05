@@ -1,10 +1,29 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
 <div class="container">
-    <h1>Chart</h1>
+
 
     <otp-widget ng-if="!isAuthenticated()"></otp-widget>
 
-    <line-chart chart="chart" class="line-chart" ng-if="isAuthenticated()"></line-chart>
+    <div class="row" ng-if="isAuthenticated()">
 
+        <h1>System resources:</h1>
+
+        <div class="col-xs-12 col-md-4">
+            <line-chart chart="chart" type="cpu1" chart-type="LineChart" class="line-chart"></line-chart>
+        </div>
+
+        <div class="col-xs-12 col-md-4">
+            <line-chart chart="chart" type="cpu5" chart-type="LineChart" class="line-chart"></line-chart>
+        </div>
+
+        <div class="col-xs-12 col-md-4">
+            <line-chart chart="chart" type="cpu15" chart-type="LineChart" class="line-chart"></line-chart>
+        </div>
+
+        <div class="col-xs-12">
+            <line-chart chart="chart" type="mem" chart-type="AreaChart" class="line-chart"></line-chart>
+        </div>
+
+    </div>
 </div>

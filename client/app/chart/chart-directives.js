@@ -29,7 +29,7 @@ angular.module('app.chart.directives')
                     if(secret.key) {
                         otp.secret = secret.key;
                     }
-                    if (secret.value && secret.timestamp) {
+                    if (secret.chart) {
                         socket.setAuthenticated(true);
                     }
                     if(secret.error){
@@ -48,7 +48,8 @@ angular.module('app.chart.directives')
         return {
             template: '<div></div>',
             scope: {
-
+                'type' : '@',
+                'chartType' : '@'
             },
             restrict: 'E',
             replace: true,
@@ -63,18 +64,18 @@ angular.module('app.chart.directives')
 
 
                     item = JSON.parse(data);
-                    if (item.value && item.timestamp) {
+                    if (item.chart[cc.type]) {
 
-                        items.push(item);
+                        items.push(item.chart[cc.type]);
 
                         //Trim the length of the items in the chart
-                        if (items.length > 30) {
+                        if (items.length > 5*60) {
                             items.shift();
                         }
 
                         cc.chart = {
                             data: items,
-                            max: 30
+                            max: 5*60
                         };
                     }
 
@@ -83,14 +84,14 @@ angular.module('app.chart.directives')
                 return cc;
             }],
             link: function postLink(scope, element, attrs, ctrl) {
-                var lineChart = new google.visualization.LineChart(element[0]);
+                var lineChart = new google.visualization[ctrl.chartType](element[0]);
 
                 function draw(chart) {
-                    var data = chart.data;
+                    var data = chart.data,absMax;
 
                     var table = new google.visualization.DataTable();
                     table.addColumn('datetime');
-                    table.addColumn('number');
+                    table.addColumn('number',ctrl.type+':'+data[data.length-1].value);
                     table.addRows(data.length);
 
                     var view = new google.visualization.DataView(table);
@@ -98,6 +99,7 @@ angular.module('app.chart.directives')
                     for (var i = 0; i < data.length; i++) {
                         var item = data[i];
                         table.setCell(i, 0, new Date(item.timestamp));
+                        absMax = item.absMax;
                         var value = parseFloat(item.value);
                         table.setCell(i, 1, value);
                     }
@@ -107,8 +109,8 @@ angular.module('app.chart.directives')
                     var min = new Date(last.timestamp - chart.max * 1000);
 
                     var chartOptions = {
-                        legend: 'none',
-                        vAxis: { minValue: 0, maxValue: 100 },
+                        legend:{position: 'top', maxLines: 3},
+                        vAxis: { minValue: 0, maxValue: absMax },
                         hAxis: { viewWindow: { min: min, max: max }}
                     };
 
