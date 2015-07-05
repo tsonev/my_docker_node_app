@@ -65,12 +65,16 @@ var interval;
 var gaugeValue = 50;
 
 function broadcast() {
-
-    gaugeValue += Math.random() * 40 - 20;
+    var load = require("os").loadavg();
+    var cpus = require("os").cpus().length;
+    //load[0] is the average load for the last minute
+    gaugeValue = Math.round(load[0]/cpus*100);
+    //gaugeValue += Math.random() * 40 - 20;
+    console.log(load);
     gaugeValue = gaugeValue < 0 ? 0 : gaugeValue > 100 ? 100 : gaugeValue;
     var time = Date.now();
 
-    var message = JSON.stringify({value: Math.floor(gaugeValue), timestamp: time});
+    var message = JSON.stringify({value: gaugeValue, timestamp: time});
 
     for (var key in clients) {
         if (clients.hasOwnProperty(key)) {
