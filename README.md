@@ -11,8 +11,12 @@ demo:
 
 https://95.85.29.160/
 
-bower install
+The angularjs app itself uses nodejs os api to display Average CPU load + memory used
+
 npm install
+
+bower install
+
 
 Now we are ready to start the server:
 
