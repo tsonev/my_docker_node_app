@@ -76,14 +76,14 @@ function broadcast() {
     var freeMem = Math.round(os.freemem()/1024/1024/1024*1000)/1000,
         totalMem = Math.round(os.totalmem()/1024/1024/1024*1000)/1000,
         usedMem = Math.round((os.totalmem()-os.freemem())/1024/1024/1024*1000)/1000;
-    console.log(
+    /*console.log(
         'Host : '+os.hostname(),
         'OS : '+os.type(),
         'RAM total : '+totalMem+' GB',
         'RAM free : '+freeMem+' GB',
         'CPU count : '+os.cpus().length,
         'Avg load : '+os.loadavg()
-    );
+    );*/
     //gaugeValue = gaugeValue < 0 ? 0 : gaugeValue > 100 ? 100 : gaugeValue;
     var time = Date.now();
     var chartObj = {

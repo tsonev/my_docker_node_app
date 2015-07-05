@@ -7,23 +7,24 @@
 
     <div class="row" ng-if="isAuthenticated()">
 
-        <h1>System resources:</h1>
-
-        <div class="col-xs-12 col-md-4">
-            <line-chart chart="chart" type="cpu1" chart-type="LineChart" class="line-chart"></line-chart>
+        <div class="col-xs-12 text-center">
+            <h1>System resources</h1>
         </div>
 
-        <div class="col-xs-12 col-md-4">
-            <line-chart chart="chart" type="cpu5" chart-type="LineChart" class="line-chart"></line-chart>
-        </div>
-
-        <div class="col-xs-12 col-md-4">
-            <line-chart chart="chart" type="cpu15" chart-type="LineChart" class="line-chart"></line-chart>
-        </div>
-
-        <div class="col-xs-12">
-            <line-chart chart="chart" type="mem" chart-type="AreaChart" class="line-chart"></line-chart>
-        </div>
+        <tabset justified="true" class="col-xs-12">
+            <tab heading="CPU 1m avg">
+                <line-chart chart="chart" type="cpu1" chart-type="LineChart" class="line-chart"></line-chart>
+            </tab>
+            <tab heading="CPU 5m avg">
+                <line-chart chart="chart" type="cpu5" chart-type="LineChart" class="line-chart"></line-chart>
+            </tab>
+            <tab heading="CPU 15m avg">
+                <line-chart chart="chart" type="cpu15" chart-type="LineChart" class="line-chart"></line-chart>
+            </tab>
+            <tab heading="Memory">
+                <line-chart chart="chart" type="mem" chart-type="AreaChart" class="line-chart"></line-chart>
+            </tab>
+        </tabset>
 
     </div>
 </div>
