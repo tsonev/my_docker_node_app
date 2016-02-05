@@ -7,9 +7,6 @@ https://github.com/tsonev/my_docker_node_app/tree/master/server/config/ssl
 
 pfx password: pass:x
 
-demo:
-
-https://95.85.29.160/
 
 The angularjs app itself uses nodejs os api to display Average CPU load + memory used.
 
